@@ -13,7 +13,7 @@ jobs:
     
     strategy:
       matrix:
-        nvim-version: [0.10, 0.11, nightly]
+        nvim-version: ['0.10', '0.11', 'nightly']
         config: [minimal, full]
     
     steps:
