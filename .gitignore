@@ -1,0 +1,23 @@
+# Local plugin directories
+plugins/*
+!plugins/.gitkeep
+
+# Docker override files
+docker-compose.override.yml
+
+# Local configurations
+configs/local/
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

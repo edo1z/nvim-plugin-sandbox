@@ -1,0 +1,53 @@
+services:
+  nvim-0.10:
+    build:
+      context: .
+      dockerfile: Dockerfile.nvim
+      args:
+        NVIM_VERSION: v0.10.2
+    container_name: nvim-0.10
+    volumes:
+      # ローカルプラグインをマウント (環境変数で指定可能)
+      - ${PLUGIN_PATH:-./plugins}:/root/.local/share/nvim/site/pack/test/start
+      # 設定ファイル
+      - ./configs:/configs:ro
+    environment:
+      - NVIM_CONFIG=${NVIM_CONFIG:-minimal}
+    working_dir: /workspace
+    tty: true
+    stdin_open: true
+    command: sh -c "nvim -u /configs/$${NVIM_CONFIG}.lua"
+
+  nvim-0.11:
+    build:
+      context: .
+      dockerfile: Dockerfile.nvim
+      args:
+        NVIM_VERSION: v0.11.2
+    container_name: nvim-0.11
+    volumes:
+      - ${PLUGIN_PATH:-./plugins}:/root/.local/share/nvim/site/pack/test/start
+      - ./configs:/configs:ro
+    environment:
+      - NVIM_CONFIG=${NVIM_CONFIG:-minimal}
+    working_dir: /workspace
+    tty: true
+    stdin_open: true
+    command: sh -c "nvim -u /configs/$${NVIM_CONFIG}.lua"
+
+  nvim-nightly:
+    build:
+      context: .
+      dockerfile: Dockerfile.nvim
+      args:
+        NVIM_VERSION: nightly
+    container_name: nvim-nightly
+    volumes:
+      - ${PLUGIN_PATH:-./plugins}:/root/.local/share/nvim/site/pack/test/start
+      - ./configs:/configs:ro
+    environment:
+      - NVIM_CONFIG=${NVIM_CONFIG:-minimal}
+    working_dir: /workspace
+    tty: true
+    stdin_open: true
+    command: sh -c "nvim -u /configs/$${NVIM_CONFIG}.lua"
