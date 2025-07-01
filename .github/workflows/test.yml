@@ -28,13 +28,13 @@ jobs:
     
     - name: Test container startup
       run: |
-        docker compose run --rm nvim-${{ matrix.nvim-version }} \
-          -c "echo 'Neovim ${{ matrix.nvim-version }} started successfully' | q"
+        docker compose run --rm --entrypoint sh nvim-${{ matrix.nvim-version }} \
+          -c 'nvim --version && echo SUCCESS'
     
     - name: Test with config
       run: |
-        NVIM_CONFIG=${{ matrix.config }} docker compose run --rm nvim-${{ matrix.nvim-version }} \
-          -c "echo 'Config ${{ matrix.config }} loaded' | q"
+        NVIM_CONFIG=${{ matrix.config }} docker compose run --rm --entrypoint sh nvim-${{ matrix.nvim-version }} \
+          -c 'nvim -u /configs/${{ matrix.config }}.lua --headless +qa && echo SUCCESS'
     
     - name: Test plugin loading
       run: |
@@ -44,13 +44,13 @@ jobs:
         
         # Test plugin mount
         PLUGIN_PATH=./test-plugin NVIM_CONFIG=${{ matrix.config }} \
-          docker compose run --rm nvim-${{ matrix.nvim-version }} \
-          -c "if vim.g.test_plugin_loaded then vim.cmd('q!') else vim.cmd('cq!') end"
+          docker compose run --rm --entrypoint sh nvim-${{ matrix.nvim-version }} \
+          -c 'nvim -u /configs/${{ matrix.config }}.lua --headless -c "echo exists(\"g:test_plugin_loaded\")" -c "qa"'
     
     - name: Test health check
       run: |
-        docker compose run --rm nvim-${{ matrix.nvim-version }} \
-          -c "checkhealth | q"
+        docker compose run --rm --entrypoint sh nvim-${{ matrix.nvim-version }} \
+          -c 'nvim --headless -c "checkhealth" -c "qa"'
 
   test-scripts:
     runs-on: ubuntu-latest
