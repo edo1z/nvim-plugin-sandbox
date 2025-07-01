@@ -52,6 +52,19 @@ NVIM_CONFIG=full PLUGIN_PATH=~/my-plugin docker-compose run --rm nvim-0.11
 ./scripts/test-plugin.sh
 ```
 
+### .bashrcにエイリアスを設定
+
+開発中のプラグインディレクトリで簡単にテストできるようにエイリアスを設定：
+
+```bash
+# ~/.bashrcに追加
+alias test-nvim-plugin='~/nvim-test-env/scripts/test-plugin.sh $(pwd) 0.11 full'
+
+# 使い方：プラグインディレクトリで実行
+cd ~/my-awesome-plugin
+test-nvim-plugin  # 現在のディレクトリがNeovim 0.11のfull設定でテストされる
+```
+
 ## 設定ファイル
 
 ### minimal.lua

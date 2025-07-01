@@ -1,0 +1,72 @@
+name: Test Neovim Containers
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test-containers:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        nvim-version: [0.10, 0.11, nightly]
+        config: [minimal, full]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Build containers
+      run: docker-compose build nvim-${{ matrix.nvim-version }}
+    
+    - name: Test container startup
+      run: |
+        docker-compose run --rm nvim-${{ matrix.nvim-version }} \
+          -c "echo 'Neovim ${{ matrix.nvim-version }} started successfully' | q"
+    
+    - name: Test with config
+      run: |
+        NVIM_CONFIG=${{ matrix.config }} docker-compose run --rm nvim-${{ matrix.nvim-version }} \
+          -c "echo 'Config ${{ matrix.config }} loaded' | q"
+    
+    - name: Test plugin loading
+      run: |
+        # Create test plugin
+        mkdir -p test-plugin/plugin
+        echo 'vim.g.test_plugin_loaded = true' > test-plugin/plugin/init.lua
+        
+        # Test plugin mount
+        PLUGIN_PATH=./test-plugin NVIM_CONFIG=${{ matrix.config }} \
+          docker-compose run --rm nvim-${{ matrix.nvim-version }} \
+          -c "if vim.g.test_plugin_loaded then vim.cmd('q!') else vim.cmd('cq!') end"
+    
+    - name: Test health check
+      run: |
+        docker-compose run --rm nvim-${{ matrix.nvim-version }} \
+          -c "checkhealth | q"
+
+  test-scripts:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Make scripts executable
+      run: chmod +x scripts/*.sh
+    
+    - name: Test test-plugin.sh script
+      run: |
+        # Create test plugin
+        mkdir -p test-plugin/plugin
+        echo 'vim.notify("Test plugin from script!")' > test-plugin/plugin/init.lua
+        
+        # Test script with default values
+        ./scripts/test-plugin.sh test-plugin
