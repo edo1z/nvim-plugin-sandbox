@@ -34,4 +34,4 @@ PLUGIN_PARENT_DIR=$(dirname "$PLUGIN_PATH")
 cd "$PROJECT_ROOT" && \
 PLUGIN_PATH="$PLUGIN_PARENT_DIR" \
 NVIM_CONFIG="$CONFIG" \
-docker-compose run --rm "nvim-${NVIM_VERSION}"
+docker compose run --rm "nvim-${NVIM_VERSION}"
