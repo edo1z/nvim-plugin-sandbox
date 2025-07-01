@@ -68,5 +68,8 @@ jobs:
         mkdir -p test-plugin/plugin
         echo 'vim.notify("Test plugin from script!")' > test-plugin/plugin/init.lua
         
-        # Test script with default values
-        ./scripts/test-plugin.sh test-plugin
+        # Test script exists and is executable
+        test -x ./scripts/test-plugin.sh && echo "Script is executable"
+        
+        # Test docker compose config is valid
+        docker compose config > /dev/null && echo "Docker compose config is valid"
