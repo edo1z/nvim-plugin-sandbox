@@ -57,12 +57,15 @@ NVIM_CONFIG=full PLUGIN_PATH=~/my-plugin docker-compose run --rm nvim-0.11
 開発中のプラグインディレクトリで簡単にテストできるようにエイリアスを設定：
 
 ```bash
-# ~/.bashrcに追加
-alias test-nvim-plugin='~/nvim-test-env/scripts/test-plugin.sh $(pwd) 0.11 full'
+# ~/.bashrcに追加（パスは環境に合わせて調整）
+alias nvim-plugin-test='~/nvim-plugin-sandbox/scripts/test-plugin.sh'
 
 # 使い方：プラグインディレクトリで実行
 cd ~/my-awesome-plugin
-test-nvim-plugin  # 現在のディレクトリがNeovim 0.11のfull設定でテストされる
+nvim-plugin-test                    # 現在のディレクトリ、0.11、minimal設定
+nvim-plugin-test . 0.10             # 現在のディレクトリ、0.10、minimal設定
+nvim-plugin-test . 0.11 full        # 現在のディレクトリ、0.11、full設定
+nvim-plugin-test . nightly full     # 現在のディレクトリ、nightly、full設定
 ```
 
 ## 設定ファイル
@@ -75,6 +78,39 @@ test-nvim-plugin  # 現在のディレクトリがNeovim 0.11のfull設定でテ
 - より実用的な設定
 - 一般的なキーマッピング付き
 - `<leader>p`で読み込まれたプラグイン一覧を表示
+
+### プラグイン固有の設定ファイル
+
+多くの最近のNeovimプラグインは`setup()`関数の呼び出しが必要です。プラグインが自動的に動作しない場合は、専用の設定ファイルを作成してください：
+
+```lua
+-- configs/my-plugin.lua の例
+---@diagnostic disable-next-line: undefined-global
+local vim = vim
+
+-- 基本設定
+vim.g.mapleader = " "
+vim.opt.number = true
+
+-- プラグインのセットアップ
+local ok, my_plugin = pcall(require, 'my-plugin')
+if ok then
+  my_plugin.setup({
+    -- プラグイン固有のオプション
+    option1 = true,
+    option2 = "value"
+  })
+  print("My-plugin loaded successfully!")
+else
+  print("Failed to load my-plugin:", my_plugin)
+end
+```
+
+使用方法：
+```bash
+# プラグインディレクトリで実行
+nvim-plugin-test . 0.11 my-plugin
+```
 
 ## カスタマイズ
 

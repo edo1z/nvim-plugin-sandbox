@@ -1,4 +1,7 @@
 -- Minimal configuration for testing plugins
+---@diagnostic disable-next-line: undefined-global
+local vim = vim
+
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.termguicolors = true
@@ -18,7 +21,17 @@ vim.g.maplocalleader = " "
 -- Basic keymaps for testing
 vim.keymap.set('n', '<leader>q', ':qa!<CR>', { desc = 'Quit all' })
 
--- Load plugins from test directory
-vim.opt.runtimepath:append("/root/.local/share/nvim/site/pack/test/start/*")
+-- Debug: List plugins
+local plugin_dir = "/root/.local/share/nvim/site/pack/test/start/"
+local plugins = vim.fn.glob(plugin_dir .. "*", 0, 1)
+print("Minimal config loaded. Found plugins:")
+for _, plugin in ipairs(plugins) do
+  print("  - " .. plugin)
+end
 
-print("Minimal config loaded. Plugins directory: /root/.local/share/nvim/site/pack/test/start/")
+-- Note: Some plugins may require manual setup
+-- If your plugin needs initialization, you can:
+-- 1. Use full.lua config which includes common setup patterns
+-- 2. Create a custom config file for your specific plugin
+-- 3. Run setup commands manually in Neovim:
+--    :lua require('your-plugin').setup()

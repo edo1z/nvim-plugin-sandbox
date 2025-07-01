@@ -8,6 +8,12 @@ docker-compose.override.yml
 # Local configurations
 configs/local/
 
+# User-specific plugin configs (exclude all except the defaults)
+configs/*.lua
+!configs/minimal.lua
+!configs/full.lua
+!configs/hoge.lua
+
 # IDE files
 .idea/
 .vscode/

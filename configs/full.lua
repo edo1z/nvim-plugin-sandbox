@@ -1,4 +1,7 @@
 -- Full configuration with common settings for plugin testing
+---@diagnostic disable-next-line: undefined-global
+local vim = vim
+
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.termguicolors = true
@@ -52,3 +55,17 @@ vim.keymap.set('n', '<leader>p', function()
 end, { desc = 'List loaded plugins' })
 
 print("Full config loaded. Press <leader>p to list loaded plugins.")
+
+-- Helper function to setup a plugin
+vim.keymap.set('n', '<leader>ps', function()
+  local plugin_name = vim.fn.input('Plugin name to setup: ')
+  if plugin_name ~= '' then
+    local ok, plugin = pcall(require, plugin_name)
+    if ok and type(plugin.setup) == "function" then
+      plugin.setup()
+      print("Setup completed for: " .. plugin_name)
+    else
+      print("Failed to setup: " .. plugin_name)
+    end
+  end
+end, { desc = 'Setup a plugin manually' })
