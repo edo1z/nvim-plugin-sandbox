@@ -114,37 +114,10 @@ nvim-plugin-test . 0.11 my-plugin
 
 ## カスタマイズ
 
-### 複数のプラグインを同時にテスト
+### 環境変数
 
-`docker-compose.override.yml`を作成：
-
-```yaml
-services:
-  nvim-0.11:
-    volumes:
-      - ~/plugins/plugin1:/root/.local/share/nvim/site/pack/test/start/plugin1
-      - ~/plugins/plugin2:/root/.local/share/nvim/site/pack/test/start/plugin2
-```
-
-### 独自の設定を追加
-
-`configs/`ディレクトリに新しい設定ファイルを追加：
-
-```bash
-# configs/custom.lua を作成
-NVIM_CONFIG=custom docker-compose run --rm nvim-0.11
-```
-
-## トラブルシューティング
-
-### プラグインが読み込まれない
-- プラグインのディレクトリ構造を確認（`lua/`や`plugin/`が含まれているか）
-- `:scriptnames`でロードされたファイルを確認
-- `<leader>p`で読み込まれたプラグインを確認（full設定時）
-
-### パーミッションエラー
-- Dockerがファイルにアクセスできることを確認
-- 必要に応じて`chmod`で権限を調整
+- `PLUGIN_PATH`: テストするプラグインのパス（デフォルト: `./plugins`）
+- `NVIM_CONFIG`: 使用する設定ファイル（デフォルト: `minimal`）
 
 ## ライセンス
 
