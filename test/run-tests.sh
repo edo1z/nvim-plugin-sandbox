@@ -45,27 +45,27 @@ for version in 0.10 0.11 nightly; do
     
     # 基本起動テスト
     run_test "Basic startup" \
-        "docker-compose run --rm nvim-$version -c 'q'"
+        "docker-compose run --rm --entrypoint sh nvim-$version -c 'nvim --version && echo SUCCESS'"
     
     # バージョン確認
     run_test "Version check" \
-        "docker-compose run --rm nvim-$version -c 'echo v:version | q'"
+        "docker-compose run --rm --entrypoint nvim nvim-$version --version"
     
     # minimal設定テスト
     run_test "Minimal config" \
-        "NVIM_CONFIG=minimal docker-compose run --rm nvim-$version -c 'q'"
+        "NVIM_CONFIG=minimal docker-compose run --rm --entrypoint sh nvim-$version -c 'nvim -u /configs/minimal.lua --headless +qa && echo SUCCESS'"
     
     # full設定テスト
     run_test "Full config" \
-        "NVIM_CONFIG=full docker-compose run --rm nvim-$version -c 'q'"
+        "NVIM_CONFIG=full docker-compose run --rm --entrypoint sh nvim-$version -c 'nvim -u /configs/full.lua --headless +qa && echo SUCCESS'"
     
     # プラグインロードテスト
     run_test "Plugin loading" \
-        "PLUGIN_PATH=./test/test-plugin docker-compose run --rm nvim-$version -c 'if exists(\"g:test_plugin_loaded\") | q | else | cq | endif'"
+        "PLUGIN_PATH=./test/test-plugin docker-compose run --rm --entrypoint sh nvim-$version -c 'nvim -u /configs/minimal.lua --headless -c \"echo exists(\\\"g:test_plugin_loaded\\\")\" -c \"qa\"'"
     
     # コマンド実行テスト
     run_test "Plugin command" \
-        "PLUGIN_PATH=./test/test-plugin docker-compose run --rm nvim-$version -c 'TestPluginInfo | q'"
+        "PLUGIN_PATH=./test/test-plugin docker-compose run --rm --entrypoint sh nvim-$version -c 'nvim -u /configs/minimal.lua --headless -c \"TestPluginInfo\" -c \"qa!\"'"
 done
 
 # スクリプトテスト

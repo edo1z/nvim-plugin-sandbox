@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile.nvim
       args:
-        NVIM_VERSION: v0.10.2
+        NVIM_VERSION: v0.10.4
     container_name: nvim-0.10
     volumes:
       # ローカルプラグインをマウント (環境変数で指定可能)
